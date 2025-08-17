@@ -7,7 +7,7 @@ import { isValidEmail, isValidString } from "../utils/auth.utils";
 
 
 export class AuthAPI {
-        register = async (req: Request, res: Response) => {
+    register = async (req: Request, res: Response) => {
         const baseResponseInst = new BaseResponse();
         const { username, email, password } = req.body;
 
@@ -108,6 +108,54 @@ export class AuthAPI {
             return res.status(200).json(baseResponseInst.buildResponse());
         } catch (error) {
             console.error("Verify error:", error);
+            baseResponseInst.setValue(500, "Internal Server Error", null);
+            return res.status(500).json(baseResponseInst.buildResponse());
+        }
+    };
+
+    getUserProfile = async (req: Request, res: Response) => {
+        const baseResponseInst = new BaseResponse();
+        const { userId } = req.body;
+
+        try {
+            const user = await User.findOne({ userId }).select('-password');
+            if (!user) {
+                baseResponseInst.setValue(404, "User not found", null);
+                return res.status(404).json(baseResponseInst.buildResponse());
+            }
+
+            baseResponseInst.setValue(200, "User profile retrieved", {
+                userId: user.userId,
+                username: user.username,
+                email: user.email,
+                verified: user.verified
+            });
+            return res.status(200).json(baseResponseInst.buildResponse());
+        } catch (error) {
+            baseResponseInst.setValue(500, "Internal Server Error", null);
+            return res.status(500).json(baseResponseInst.buildResponse());
+        }
+    };
+
+    updateUserProfile = async (req: Request, res: Response) => {
+        const baseResponseInst = new BaseResponse();
+        const { userId, username } = req.body;
+
+        try {
+            const user = await User.findOneAndUpdate(
+                { userId },
+                { username },
+                { new: true }
+            ).select('-password');
+
+            if (!user) {
+                baseResponseInst.setValue(404, "User not found", null);
+                return res.status(404).json(baseResponseInst.buildResponse());
+            }
+
+            baseResponseInst.setValue(200, "Profile updated successfully", user);
+            return res.status(200).json(baseResponseInst.buildResponse());
+        } catch (error) {
             baseResponseInst.setValue(500, "Internal Server Error", null);
             return res.status(500).json(baseResponseInst.buildResponse());
         }
