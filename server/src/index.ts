@@ -2,7 +2,9 @@ import express, { Request, Response, Express } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import { API } from "./api/api";
+import { AuthAPI } from "./api/auth";
+import { RoomAPI } from "./api/room";
+import { QuizAPI } from "./api/quiz";
 
 dotenv.config();
 
@@ -27,7 +29,9 @@ if (process.env.DB_URL) {
     console.log("⚠️ Can't find DB_URL");
 }
 
-const APIinst = new API();
+const APIinst = new AuthAPI();
+const RoomAPIinst = new RoomAPI();
+const QuizAPIinst = new QuizAPI();
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello from Express + TypeScript 🚀");

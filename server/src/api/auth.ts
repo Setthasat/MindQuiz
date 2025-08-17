@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
-import { isValidEmail, isValidString } from "../utils/auth.utils";
-import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
 import User from "../models/user.model";
+import { v4 as uuidv4 } from "uuid";
+import bcrypt from "bcryptjs";
+import { Request, Response } from "express";
+import { BaseResponse } from "../utils/baseresponse.utils";
+import { isValidEmail, isValidString } from "../utils/auth.utils";
 
-export class API {
 
-    register = async (req: Request, res: Response) => {
+export class AuthAPI {
+        register = async (req: Request, res: Response) => {
         const baseResponseInst = new BaseResponse();
         const { username, email, password } = req.body;
 
@@ -15,13 +16,11 @@ export class API {
             return res.status(400).json(baseResponseInst.buildResponse());
         }
 
-
         const isExistingEmail = await User.findOne({ email });
         if (isExistingEmail) {
             baseResponseInst.setValue(400, "User already exists", null);
             return res.status(400).json(baseResponseInst.buildResponse());
         }
-
 
         try {
             const salt = await bcrypt.genSalt(10);
@@ -113,29 +112,4 @@ export class API {
             return res.status(500).json(baseResponseInst.buildResponse());
         }
     };
-}
-
-class BaseResponse {
-    code: number;
-    description: string;
-    data: any;
-
-    constructor(code: number = 200, description: string = "", data: any = null) {
-        this.code = code;
-        this.description = description;
-        this.data = data;
-    }
-
-    buildResponse() {
-        return {
-            status: { code: this.code, description: this.description },
-            data: this.data,
-        };
-    }
-
-    setValue(code: number, description: string, data: any) {
-        this.code = code;
-        this.description = description;
-        this.data = data;
-    }
 }
