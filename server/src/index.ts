@@ -34,7 +34,7 @@ if (process.env.DB_URL) {
 }
 
 // Initialize API instances
-const APIinst = new AuthAPI();
+const Authinst = new AuthAPI();
 const RoomAPIinst = new RoomAPI();
 const QuizAPIinst = new QuizAPI();
 const SubmissionAPIinst = new SubmissionAPI();
@@ -57,9 +57,11 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // Auth routes
-app.post("/api/register", APIinst.register);
-app.post("/api/login", APIinst.login);
-app.get("/api/verify/:token", APIinst.verifyEmail);
+app.post("/api/register", Authinst.register);
+app.post("/api/login", Authinst.login);
+app.get("/api/verify/:token", Authinst.verifyEmail);
+app.post("/api/get/user", Authinst.getUserProfile);
+app.post("/api/update/user", Authinst.updateUserProfile);
 
 // Room routes
 app.post("/api/room/create", RoomAPIinst.createRoom);

@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
 
 export default function Register() {
-    const usernameRef = useRef<HTMLInputElement>(null);
+    const firstNameRef = useRef<HTMLInputElement>(null);
+    const lastNameRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
@@ -28,13 +29,15 @@ export default function Register() {
         e.preventDefault();
         setIsLoading(true);
 
+        const firstName = firstNameRef.current?.value || "";
+        const lastName = lastNameRef.current?.value || "";
+        const username = `${firstName} ${lastName}`.trim();
+
         const user = {
-            username: usernameRef.current?.value || "",
+            username,
             email: emailRef.current?.value || "",
             password: passwordRef.current?.value || "",
         };
-
-        console.log(user);
 
         try {
             const res = await axios.post(`${API_URL}/register`, user);
@@ -46,7 +49,7 @@ export default function Register() {
                 import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
                 {
                     user_email: user.email,
-                    verify_link: verifyLink 
+                    verify_link: verifyLink
                 },
                 import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             );
@@ -63,22 +66,55 @@ export default function Register() {
     };
 
     return (
-        <div className="flex flex-col justify-start items-center min-h-screen max-h-screen max-w-screen bg-[#12161C] px-4 pt-16 md:pt-24 overflow-hidden">
-            <h2 className="text-white text-4xl md:text-6xl pb-8">Register</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8 w-[70%] max-w-md text-white">
-                <input ref={usernameRef} type="text" placeholder="Username" className="input-field" required />
-                <input ref={emailRef} type="email" placeholder="Email" className="input-field" required />
-                <input ref={passwordRef} type="password" placeholder="Password" className="input-field" required />
+        <div className="flex justify-center items-center min-h-screen px-4 ">
+            <div className="bg-white p-8 sm:p-12 rounded-2xl shadow-xl w-full max-w-lg">
+                
+                {/* Title */}
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-8">
+                    Register
+                </h1>
 
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`btn ${isLoading ? "loading" : ""} ${messageType === "success" ? "success" : messageType === "error" ? "error" : ""}`}
-                >
-                    {isLoading ? "Registering..." : message || "Register"}
-                </button>
-                <a className="text-right underline mt-2" href="/login">Already have an account? Login</a>
-            </form>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-black">
+                    
+                    {/* First & Last Name Side by Side on larger screens */}
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <input 
+                            ref={firstNameRef} 
+                            type="text" 
+                            placeholder="First Name" 
+                            className="input-field flex-1 border p-2 rounded-lg" 
+                            required 
+                        />
+                        <input 
+                            ref={lastNameRef} 
+                            type="text" 
+                            placeholder="Last Name" 
+                            className="input-field flex-1 border p-2 rounded-lg" 
+                            required 
+                        />
+                    </div>
+
+                    <input ref={emailRef} type="email" placeholder="Email" className="input-field border p-2 rounded-lg" required />
+                    <input ref={passwordRef} type="password" placeholder="Password" className="input-field border p-2 rounded-lg" required />
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className={`w-full py-3 rounded-lg font-semibold transition duration-300 
+                            ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"} 
+                            ${messageType === "success" ? "bg-green-600" : messageType === "error" ? "bg-red-600" : ""}`}
+                    >
+                        {isLoading ? "Registering..." : message || "Register"}
+                    </button>
+
+                    <p className="text-center text-sm text-gray-600 mt-4">
+                        Already have an account?{" "}
+                        <a href="/login" className="text-blue-600 font-medium hover:underline">
+                            Login
+                        </a>
+                    </p>
+                </form>
+            </div>
         </div>
     );
 }

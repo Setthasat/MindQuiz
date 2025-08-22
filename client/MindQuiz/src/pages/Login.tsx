@@ -2,11 +2,9 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../store/store";
-import { motion } from 'framer-motion';
-
+import { motion } from "framer-motion";
 
 function Login() {
-
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -22,10 +20,7 @@ function Login() {
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        console.log(getUserId());
-        if (getUserId()) {
-            logout();
-        }
+        if (getUserId()) logout();
     }, []);
 
     const showMessage = (text: string, type: "success" | "error") => {
@@ -61,9 +56,10 @@ function Login() {
             setTimeout(() => {
                 navigate("/Home");
             }, 1500);
-
         } catch (error: any) {
-            const errorMessage = error.response?.data?.status?.description || "Login failed. Please check your credentials.";
+            const errorMessage =
+                error.response?.data?.status?.description ||
+                "Login failed. Please check your credentials.";
             showMessage(errorMessage, "error");
         } finally {
             setIsLoading(false);
@@ -71,68 +67,76 @@ function Login() {
     };
 
     return (
-        <div className="flex flex-col justify-start items-center min-h-screen max-h-screen max-w-screen bg-[#12161C] px-4 pt-16 md:pt-24 overflow-hidden">
-            <form
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-6 md:gap-8 text-lg md:text-[1.5rem] mt-8 md:mt-12 w-[70%] max-w-md text-white justify-center items-center"
-            >
-                <input
-                    ref={emailRef}
-                    className="w-full h-12 md:h-[4rem] bg-transparent my-2 focus:outline-none border-b border-white text-white text-base md:text-lg peer"
-                    type="email"
-                    placeholder="Email"
-                    required
-                />
-                <input
-                    ref={passwordRef}
-                    className="w-full h-12 md:h-[4rem] bg-transparent my-2 focus:outline-none border-b border-white text-white text-base md:text-lg peer"
-                    type="password"
-                    placeholder="Password"
-                    required
-                />
-                <motion.button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`relative flex justify-center items-center w-full h-12 md:h-16 rounded-lg border-2 overflow-hidden ${isLoading
-                        ? "bg-gray-600 border-gray-500 text-gray-300 cursor-not-allowed"
-                        : messageType === "success"
-                            ? "bg-green-600 border-green-500 text-white"
-                            : messageType === "error"
-                                ? "bg-red-600 border-red-500 text-white"
-                                : "border-white/30 hover:bg-white hover:text-[#12161C] hover:border-white"
-                        }`}
-                    whileHover={!isLoading ? {
-                        scale: 1.05,
-                        backgroundColor: messageType === "success" ? "rgb(22 163 74)" : messageType === "error" ? "rgb(220 38 38)" : "rgba(255, 255, 255, 1)",
-                        color: messageType === "success" || messageType === "error" ? "#fff" : "#000",
-                        borderColor: messageType === "success" ? "rgb(22 163 74)" : messageType === "error" ? "rgb(220 38 38)" : "rgba(255, 255, 255, 1)",
-                        y: -5,
-                        boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.2)"
-                    } : {}}
-                    whileTap={!isLoading ? { scale: 0.95 } : {}}
-                    transition={{
-                        type: "spring",
-                        stiffness: 500,
-                        damping: 15
-                    }}
+        <div className="flex justify-center items-center min-h-screen px-4">
+            <div className="bg-white p-8 sm:p-12 rounded-2xl shadow-xl w-full max-w-lg">
+                {/* Title */}
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-8">
+                    Login
+                </h1>
+
+                <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-col gap-6 md:gap-8 text-base md:text-lg"
                 >
-                    <span>
-                        {isLoading ? (
-                            <span className="flex items-center gap-2">
-                                <span>Signing in</span>
-                                <span className="animate-pulse">...</span>
-                            </span>
-                        ) : messageType === "success" ? (
-                            "Login successful!"
-                        ) : messageType === "error" ? (
-                            message || "Sign in"
-                        ) : (
-                            "Sign in"
-                        )}
-                    </span>
-                </motion.button>
-                <a className="text-right w-full px-2 md:px-6 underline underline-offset-8 cursor-pointer" href="/register">Sign up</a>
-            </form>
+                    <input
+                        ref={emailRef}
+                        type="email"
+                        placeholder="Email"
+                        className="w-full h-12 md:h-14 px-4 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                    <input
+                        ref={passwordRef}
+                        type="password"
+                        placeholder="Password"
+                        className="w-full h-12 md:h-14 px-4 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+
+                    <motion.button
+                        type="submit"
+                        disabled={isLoading}
+                        className={`w-full h-12 md:h-14 rounded-lg font-semibold transition duration-300 
+                            ${isLoading
+                                ? "bg-gray-400 cursor-not-allowed text-white"
+                                : messageType === "success"
+                                    ? "bg-green-600 text-white"
+                                    : messageType === "error"
+                                        ? "bg-red-600 text-white"
+                                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                            }`}
+                        whileHover={!isLoading ? {
+                            scale: 1.05,
+                            y: -3,
+                            boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.2)"
+                        } : {}}
+                        whileTap={!isLoading ? { scale: 0.95 } : {}}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 15
+                        }}
+                    >
+                        {isLoading
+                            ? "Signing in..."
+                            : messageType === "success"
+                                ? "Login successful!"
+                                : messageType === "error"
+                                    ? message || "Sign in"
+                                    : "Sign in"}
+                    </motion.button>
+
+                    <p className="text-center text-sm text-gray-600 mt-4">
+                        Don’t have an account?{" "}
+                        <a
+                            href="/register"
+                            className="text-blue-600 font-medium hover:underline"
+                        >
+                            Sign up
+                        </a>
+                    </p>
+                </form>
+            </div>
         </div>
     );
 }
