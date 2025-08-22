@@ -1,2 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  --bg-color: #1F05EE;
+  --grad-light: #17DFFF;
+  --grad-dark: #1F05EE;
+  --grad-alt-light: #1b72f7;
+  --grad-alt-dark: #1F05EE;
+}
+
+.dark {
+  --bg-color: #2A0172;
+  --grad-light: #000000;
+  --grad-dark: #2A0172;
+  --grad-alt-light: #150139;
+  --grad-alt-dark: #2A0172;
+}
