@@ -1,25 +1,47 @@
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Settings, PencilLine } from "lucide-react";
+import { useStore } from "../store/store";
+import { useState, useEffect } from "react";
 function Navbar() {
-    return (
-        <div className="fixed top-0 left-0 w-full z-50">
-            <nav className="flex justify-between items-center">
-                <div className="w-screen px-16 py-2">
-                    <div className="flex justify-between h-16">
-                        <div className="flex items-center">
-                            <div className="text-4xl font-bold text-white flex justify-center items-center gap-2"><span><GraduationCap size={32} /></span>MindQuiz</div>
-                        </div>
-                        <div className="hidden md:block">
-                            <div className="ml-10 flex space-x-4 items-center justify-center h-full text-white text-2xl">
-                                <a href="/home" className=" hover:bg-white px-3 py-2 rounded-md hover:text-blue-800 font-medium duration-300">Home</a>
-                                <a href="/about" className=" hover:bg-white px-3 py-2 rounded-md hover:text-blue-800 font-medium duration-300">About</a>
-                                <a href="/contact" className=" hover:bg-white px-3 py-2 rounded-md hover:text-blue-800 font-medium duration-300">Contact</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+  const getUserId = useStore((state) => state.getUserId);
+  const userId = getUserId();
+  const [username, setUsername] = useState<string>("");
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) setUsername(storedUsername);
+  }, [userId]);
+
+  return (
+    <div className="fixed top-0 left-0 w-full z-50">
+      <nav className="flex justify-between items-center">
+        <div className="w-screen px-12 py-2">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <a
+                href="/home"
+                className="text-4xl font-bold text-white flex justify-center items-center gap-2"
+              >
+                <span>
+                  <GraduationCap size={32} />
+                </span>
+                MindQuiz
+              </a>
+            </div>
+            <div className="hidden md:block">
+              <div className="ml-10 flex space-x-4 items-center justify-center h-full text-white text-2xl">
+                <h1 className=" flex justify-center items-center gap-4 px-3 py-2 rounded-md font-medium duration-300">
+                  {username}
+                </h1>
+                <button className="px-3 py-2 rounded-md font-medium duration-300 hover:rotate-180 ">
+                  <Settings />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-    );
+      </nav>
+    </div>
+  );
 }
 
 export default Navbar;

@@ -12,7 +12,18 @@ const QuestionSchema = new mongoose_1.Schema({
     choices: [{ type: String }],
     answer: { type: String },
     score: { type: Number, default: 0 },
-    manualGrading: { type: Boolean, default: false }
+    manualGrading: {
+        type: Boolean,
+        default: function () {
+            return this.answerType === 'writing';
+        }
+    }
+});
+QuestionSchema.pre('save', function (next) {
+    if (this.answerType === 'writing') {
+        this.manualGrading = true;
+    }
+    next();
 });
 const RoomSchema = new mongoose_1.Schema({
     roomId: { type: String, required: true },
@@ -22,5 +33,13 @@ const RoomSchema = new mongoose_1.Schema({
     members: [{ type: String }],
     createdAt: { type: Date, default: Date.now },
     question: [QuestionSchema],
+});
+RoomSchema.pre('save', function (next) {
+    this.question.forEach(question => {
+        if (question.answerType === 'writing') {
+            question.manualGrading = true;
+        }
+    });
+    next();
 });
 exports.Room = (0, mongoose_1.model)('Room', RoomSchema);
